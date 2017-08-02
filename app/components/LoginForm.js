@@ -11,6 +11,11 @@ class LoginForm extends Component {
     onChangeTextToHome: () => void,
     textToHome: string
   };
+  state: {
+    inputEmail: string,
+    inputPassword: string,
+    tryText: string
+  }
   constructor() {
     super();
     this.state = {

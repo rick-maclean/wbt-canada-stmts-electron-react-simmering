@@ -10,7 +10,8 @@ import appStorage from 'electron-json-storage';
 
 import jestpadded from './jest-padded-90.png';
 import LoginForm from '../components/LoginForm';
-import JobSpecification from '../components/JobSpecification';
+import SelectWbtStatement from '../components/SelectWbtStatement';
+import StatementDisplay from '../components/StatementDisplay';
 
 const app = electron.remote;
 const dialog = app.dialog;
@@ -23,6 +24,14 @@ function persistData(storageKey, jsonData) {
 }
 
 export default class Home extends Component {
+  state: {
+    emailUsername: string,
+    passwordStateNotUsed: string,
+    inputText: string,
+    textInHome: string,
+    metaDataFolder: string,
+    metaDataFolderSelected: boolean
+  }
   constructor() {
     super();
     this.state = {
@@ -68,14 +77,14 @@ export default class Home extends Component {
             <img src={jestpadded} className="img-thumbnail" alt="logo" />
           </div>
           <h1>Hi there we have a very simple React in Electron App</h1>
-          <h3>Well what are we up to now Eric and Rick</h3>
+          <h3>Well what are we up to now Rick</h3>
+          <SelectWbtStatement />
+          <StatementDisplay />
           <LoginForm
             onTryText={(tryText) => this.handleTryText(tryText)}
             subHandleLogin={(loginCredentials) => this.mainHandleLogin(loginCredentials)}
             textToHome={this.state.textInHome}
             onChangeTextToHome={this.mainOnChangeTextToHome}
-          />
-          <JobSpecification
           />
         </div>
       </div>
