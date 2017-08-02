@@ -57,17 +57,6 @@ export default class Home extends Component {
     }
   }
 
-  mainHandleLogin(loginCredentials) {
-    console.log(loginCredentials);
-    const subuserName = loginCredentials.userName;
-    const subpassword = loginCredentials.password;
-    console.log('subuserName is = ' + subuserName);
-    console.log('subpassword is = '  + subpassword);
-    this.setState({
-      emailUsername: subuserName,
-      password: subpassword
-    }); // setState
-  }
   render() {
     return (
       <div>
@@ -82,7 +71,6 @@ export default class Home extends Component {
           <StatementDisplay />
           <LoginForm
             onTryText={(tryText) => this.handleTryText(tryText)}
-            subHandleLogin={(loginCredentials) => this.mainHandleLogin(loginCredentials)}
             textToHome={this.state.textInHome}
             onChangeTextToHome={this.mainOnChangeTextToHome}
           />
