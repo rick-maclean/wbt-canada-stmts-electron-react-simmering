@@ -1,7 +1,7 @@
 // @flow
 import React, { Component } from 'react';
 import electron from 'electron';
-import $ from 'jquery';
+import jquery from 'jquery';
 // import PropTypes from 'prop-types';
 //  import { Link } from 'react-router-dom';
 //  import styles from './LoginForm.css';
@@ -26,33 +26,40 @@ class SelectWbtStatement extends Component {
     };
   }
   readWbtStatementIntojQuery = () => {
+    console.log('entering readWbtStatementIntojQuery');
     const filename = this.state.wbtStatementFile;
+    console.log('filename is==> ' + filename);
     fs.readFile(filename, (err, html) => {
       let $html;
       if (err) {
         // handle error
+        console.log('inside readWbtStatementIntojQuery fs.readFile has an error');
       } else {
-        $html = $(html);
+        console.log('entering else of fs.readFile   readWbtStatementIntojQuery');
+        // console.log(html);
+        $html = jquery(html.toString());
+        console.log($html);
         // now $html is a jQuery object
         // const evenElements = $html.class('even');
-        const oddElements = $html.class('odd');
-        const transactionDateVar = oddElements[0].class('date').text();
+        //const oddElements = $html.class('odd');
+        //const transactionDateVar = oddElements[0].class('date').text();
+        const transactionDateVar = '2017/08/03';
         this.setState({ transactionDate: transactionDateVar });
         console.log('inside readWbtStatementIntojQuery transactionDateVar=  ' + transactionDateVar);
       }
     });
+    console.log('leaving readWbtStatementIntojQuery');
   }
   selectWbtStatementFile = () => {
     console.log('called selectWbtStatementFile');
     const fileNames = dialog.showOpenDialog();
     if (fileNames === undefined) {
-      console.log('No file selected');
+      console.log('inside selectWbtStatementFile No file selected');
       this.setState({ wbtStatementFile: '' });
     } else {
       // console.log('going to set the filename and boolean' + fileNames);
       this.setState({ wbtStatementFile: fileNames[0] });
     }
-    this.readWbtStatementIntojQuery();
     console.log('end of selectWbtStatementFile');
   }
   handleTransactionDate = (event) => {
@@ -72,6 +79,13 @@ class SelectWbtStatement extends Component {
       $('#sendButton').attr('disabled', 'true');
     }
     */
+    let transDate;
+    if (this.state.wbtStatementFile === 'wbtStatementFile') {
+      transDate = 'No file selected Gumbo.';
+    } else {
+      transDate = '2017/08/03';
+    }
+
     return (
       <div className="panel panel-primary">
         <div className="panel-heading apt-addheading">Select WBT Statement</div>
@@ -86,21 +100,21 @@ class SelectWbtStatement extends Component {
                     type="button"
                     className="btn btn-primary"
                     onClick={this.selectWbtStatementFile}
-                  >Select WBT Statement html file</button>&nbsp;
+                  >Select WBT Statement</button>&nbsp;
                 </div>
               </div>
             </div>
             <div className="form-group">
               <label className="col-sm-3 control-label" htmlFor="transactionDate">transactionDate</label>
-              <div className="col-sm-9">
-                <input
-                  name="transactionDateTextBox"
-                  type="text" className="form-control"
-                  id="transactionDate"
-                  onChange={this.handleTransactionDate}
-                  value={this.state.transactionDate}
-                  placeholder="transactionDate"
-                />
+              <div className="form-text" id="transactionDate" placeholder="transactionDate" >{transDate}</div>
+              <div className="col-sm-offset-3 col-sm-9">
+                <div className="pull-right">
+                  <button
+                    type="button"
+                    className="btn btn-primary"
+                    onClick={this.readWbtStatementIntojQuery}
+                  >Process WBT Statement</button>&nbsp;
+                </div>
               </div>
             </div>
           </form>
