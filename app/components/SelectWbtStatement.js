@@ -8,16 +8,39 @@ import $ from 'jquery';
 
 const app = electron.remote;
 const dialog = app.dialog;
+const fs = require('fs');
 
 class SelectWbtStatement extends Component {
+  props: {
+    onTransactionDate: () => void
+  };
   state: {
     wbtStatementFile: string,
+    transactionDate: string
   }
   constructor() {
     super();
     this.state = {
       wbtStatementFile: 'wbtStatementFile',
+      transactionDate: 'transactionDate'
     };
+  }
+  readWbtStatementIntojQuery = () => {
+    const filename = this.state.wbtStatementFile;
+    fs.readFile(filename, (err, html) => {
+      let $html;
+      if (err) {
+        // handle error
+      } else {
+        $html = $(html);
+        // now $html is a jQuery object
+        // const evenElements = $html.class('even');
+        const oddElements = $html.class('odd');
+        const transactionDateVar = oddElements[0].class('date').text();
+        this.setState({ transactionDate: transactionDateVar });
+        console.log('inside readWbtStatementIntojQuery transactionDateVar=  ' + transactionDateVar);
+      }
+    });
   }
   selectWbtStatementFile = () => {
     console.log('called selectWbtStatementFile');
@@ -29,9 +52,17 @@ class SelectWbtStatement extends Component {
       // console.log('going to set the filename and boolean' + fileNames);
       this.setState({ wbtStatementFile: fileNames[0] });
     }
-    // NOTE put this back in when the first part is working
-    // persistData('jobFilePersistKey', fileNames[0]);
+    this.readWbtStatementIntojQuery();
     console.log('end of selectWbtStatementFile');
+  }
+  handleTransactionDate = (event) => {
+    const target = event.target;
+    console.log(target.name);
+    console.log(target.value);
+    if (target.name === 'transactionDateTextBox') {
+      this.setState({ transactionDate: target.value });
+    }
+    this.props.onTransactionDate(this.state.transactionDate);
   }
   render() {
     /*
@@ -57,6 +88,19 @@ class SelectWbtStatement extends Component {
                     onClick={this.selectWbtStatementFile}
                   >Select WBT Statement html file</button>&nbsp;
                 </div>
+              </div>
+            </div>
+            <div className="form-group">
+              <label className="col-sm-3 control-label" htmlFor="transactionDate">transactionDate</label>
+              <div className="col-sm-9">
+                <input
+                  name="transactionDateTextBox"
+                  type="text" className="form-control"
+                  id="transactionDate"
+                  onChange={this.handleTransactionDate}
+                  value={this.state.transactionDate}
+                  placeholder="transactionDate"
+                />
               </div>
             </div>
           </form>

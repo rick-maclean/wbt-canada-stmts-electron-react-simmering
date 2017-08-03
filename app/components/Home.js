@@ -48,6 +48,11 @@ export default class Home extends Component {
     console.log('in handleTryText we have inputText as=>' + inputText);
     this.setState({ inputText: tryText });
   }
+  handleTransactionDate(inputText) {
+    // const tryTransactionDate = inputText;
+    console.log('in handleTryText we have inputText as=>' + inputText);
+    // this.setState({ inputText: tryText });
+  }
   mainOnChangeTextToHome = (event) => {
     const target = event.target;
     console.log(target.name);
@@ -67,7 +72,9 @@ export default class Home extends Component {
           </div>
           <h1>Hi there we have a very simple React in Electron App</h1>
           <h3>Well what are we up to now Rick</h3>
-          <SelectWbtStatement />
+          <SelectWbtStatement
+            onTransactionDate={(transactionDate) => this.handleTransactionDate(transactionDate)}
+          />
           <StatementDisplay />
           <LoginForm
             onTryText={(tryText) => this.handleTryText(tryText)}
