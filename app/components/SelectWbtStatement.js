@@ -30,19 +30,24 @@ class SelectWbtStatement extends Component {
     const filename = this.state.wbtStatementFile;
     console.log('filename is==> ' + filename);
     fs.readFile(filename, (err, html) => {
-      let $html;
+      let jqueryHtml;
       if (err) {
         // handle error
         console.log('inside readWbtStatementIntojQuery fs.readFile has an error');
       } else {
         console.log('entering else of fs.readFile   readWbtStatementIntojQuery');
         // console.log(html);
-        $html = jquery(html.toString());
-        console.log($html);
+        jqueryHtml = jquery(html.toString());
+        console.log(jqueryHtml);
         // now $html is a jQuery object
-        // const evenElements = $html.class('even');
-        //const oddElements = $html.class('odd');
-        //const transactionDateVar = oddElements[0].class('date').text();
+
+        /*
+        const evenElements = $html.class('even');
+        const oddElements = $html.class('odd');
+        let transactionDateVar = oddElements[0].class('date').text();
+        transactionDateVar += '    ';
+        transactionDateVar += evenElements[0].class('date').text();
+        */
         const transactionDateVar = '2017/08/03';
         this.setState({ transactionDate: transactionDateVar });
         console.log('inside readWbtStatementIntojQuery transactionDateVar=  ' + transactionDateVar);
