@@ -17,14 +17,24 @@ class SelectWbtStatement extends Component {
   state: {
     wbtStatementFile: string,
     transactionDate: string,
-    singleTransaction: string
+    singleTransaction: string,
+    transactionAmount: string,
+    transDescription: string,
+    transMethod: string,
+    transAccount: string,
+    transReference: string
   }
   constructor() {
     super();
     this.state = {
       wbtStatementFile: 'wbtStatementFile',
       transactionDate: 'transactionDate',
-      singleTransaction: 'singleTransaction'
+      singleTransaction: 'singleTransaction',
+      transactionAmount: 'transactionAmount',
+      transDescription: 'transDescr',
+      transMethod: 'transMethod',
+      transAccount: 'transAccount',
+      transReference: 'transReference'
     };
   }
   readWbtStatementIntojQuery = () => {
@@ -63,33 +73,40 @@ class SelectWbtStatement extends Component {
         console.log(firstOddEntry);
         this.setState({ singleTransaction: firstOddEntry });
         const dateDt = firstOddEntry.getElementsByClassName('date')[0];
+        console.log('dateDt is: ');
         console.log(dateDt);
-        /*
-        const currencyDt = firstOddEntry[1].Text();
-        console.log(currencyDt);
-        const descriptionDt = firstOddEntry[2].Text();
-        console.log(descriptionDt);
-        const methodDt = firstOddEntry[3].Text();
-        console.log(methodDt);
-        const accountDt = firstOddEntry[4].Text();
-        console.log(accountDt);
-        const referanceDt = firstOddEntry[5].Text();
-        console.log(referanceDt);
-        */
+        const dateText = dateDt.innerText;
+        console.log('dateText is: ');
+        console.log(dateText);
+        this.setState({ transactionDate: dateText });
+        const amountDt = firstOddEntry.getElementsByClassName('currency')[0].innerText;
+        this.setState({ transactionAmount: amountDt });
+        const transDescr = firstOddEntry.getElementsByClassName('description')[0].innerHTML;
+        this.setState({ transDescription: transDescr });
+        const decscriptionSplit = transDescr.split('<br>');
+        for (let i = 0, len = decscriptionSplit.length; i < len; i++) {
+          console.log(decscriptionSplit[i]);
+        }
+        let tntUserId = decscriptionSplit[0];
+        console.log(tntUserId);
+        const indx = tntUserId.indexOf(')');
+        tntUserId = tntUserId.substring(1, indx);
+        console.log(tntUserId);
+        const tntName = decscriptionSplit[1];
+        console.log(tntName);
+        const tntStreet = decscriptionSplit[2];
+        console.log(tntStreet);
+        const tntCityStZip = decscriptionSplit[3];
+        console.log(tntCityStZip);
+        const tntCountry = decscriptionSplit[4];
+        console.log(tntCountry);
 
-        // now $html is a jQuery object
-
-        /*
-        const evenElements = $html.class('even');
-        const oddElements = $html.class('odd');
-        let transactionDateVar = oddElements[0].class('date').text();
-        transactionDateVar += '    ';
-        transactionDateVar += evenElements[0].class('date').text();
-        */
-        const transactionDateVar = '2017/08/03';
-        this.setState({ transactionDate: transactionDateVar });
-        console.log('inside readWbtStatementIntojQuery transactionDateVar ==> \n ');
-        console.log(transactionDateVar);
+        const methodDt = firstOddEntry.getElementsByClassName('method')[0].innerHTML;
+        this.setState({ transMethod: methodDt });
+        const accountDt = firstOddEntry.getElementsByClassName('account')[0].innerHTML;
+        this.setState({ transAccount: accountDt });
+        const referenceDt = firstOddEntry.getElementsByClassName('reference')[0].innerHTML;
+        this.setState({ transReference: referenceDt });
       }
     });
     console.log('leaving readWbtStatementIntojQuery');
@@ -124,12 +141,22 @@ class SelectWbtStatement extends Component {
     }
     */
     let transDate;
+    let transactionAmount;
+    let transDescr;
+    let transMethod = 'blah';
+    let transAccount = 'blah';
+    let transReference = 'blah';
     if (this.state.wbtStatementFile === 'wbtStatementFile') {
       transDate = 'No file selected Gumbo.';
+      transactionAmount = 'No amount yet';
     } else {
-      transDate = '2017/08/03';
+      transDate = this.state.transactionDate;
+      transactionAmount = this.state.transactionAmount;
+      transDescr = this.state.transDescription;
+      transMethod = this.state.transMethod;
+      transAccount = this.state.transAccount;
+      transReference = this.state.transReference;
     }
-    const transactionOne = this.state.singleTransaction;
 
     return (
       <div className="panel panel-primary">
@@ -152,6 +179,21 @@ class SelectWbtStatement extends Component {
             <div className="form-group">
               <label className="col-sm-3 control-label" htmlFor="transactionDate">transactionDate</label>
               <div className="form-text" id="transactionDate" placeholder="transactionDate" >{transDate}</div>
+              <br></br>
+              <label className="col-sm-3 control-label" htmlFor="transactionDate">Amount</label>
+              <div className="form-text" id="transactionAmount" placeholder="transactionAmount" >{transactionAmount}</div>
+              <br></br>
+              <label className="col-sm-3 control-label" htmlFor="transactionDate">Description</label>
+              <div className="form-text" id="transDescr" placeholder="transDescr" >{transDescr}</div>
+              <br></br>
+              <label className="col-sm-3 control-label" htmlFor="transactionDate">method</label>
+              <div className="form-text" id="transDescr" placeholder="transDescr" >{transMethod}</div>
+              <br></br>
+              <label className="col-sm-3 control-label" htmlFor="transactionDate">account Member</label>
+              <div className="form-text" id="transDescr" placeholder="transDescr" >{transAccount}</div>
+              <br></br>
+              <label className="col-sm-3 control-label" htmlFor="transactionDate">reference</label>
+              <div className="form-text" id="transDescr" placeholder="transDescr" >{transReference}</div>
               <div className="col-sm-offset-3 col-sm-9">
                 <div className="pull-right">
                   <button
@@ -160,16 +202,6 @@ class SelectWbtStatement extends Component {
                     onClick={this.readWbtStatementIntojQuery}
                   >Process WBT Statement</button>&nbsp;
                 </div>
-              </div>
-            </div>
-            <div className="form-group">
-              <label className="col-sm-3 control-label" htmlFor="transaction">Trasnaction</label>
-              <div>
-                <table>
-                  <tbody id="displayTableRow">
-                    <tr><td>some data for this row</td></tr>
-                  </tbody>
-                </table>
               </div>
             </div>
           </form>
