@@ -16,13 +16,15 @@ class SelectWbtStatement extends Component {
   };
   state: {
     wbtStatementFile: string,
-    transactionDate: string
+    transactionDate: string,
+    singleTransaction: string
   }
   constructor() {
     super();
     this.state = {
       wbtStatementFile: 'wbtStatementFile',
-      transactionDate: 'transactionDate'
+      transactionDate: 'transactionDate',
+      singleTransaction: 'singleTransaction'
     };
   }
   readWbtStatementIntojQuery = () => {
@@ -38,7 +40,43 @@ class SelectWbtStatement extends Component {
         console.log('entering else of fs.readFile   readWbtStatementIntojQuery');
         // console.log(html);
         jqueryHtml = jquery(html.toString());
+        console.log('jqueryHtml.className===>');
+        console.log(jqueryHtml.className);
+        console.log('jqueryHtml is set to ===> \n');
         console.log(jqueryHtml);
+        // const evenElements = jqueryHtml.find('odd');
+        // console.log('evenElements is set to ==> \n');
+        // console.log(evenElements);
+        const tableData = jqueryHtml[12];
+        console.log('tableData.className===>');
+        console.log(tableData.className);
+        console.log('tableData is set to ==> \n');
+        console.log(tableData);
+        const evenTableEntries = tableData.getElementsByClassName('even');
+        console.log('evenTableEntries are --> ');
+        console.log(evenTableEntries);
+        console.log('oddTableEntries are --> ');
+        const oddTableEntries = tableData.getElementsByClassName('odd');
+        console.log(oddTableEntries);
+        const firstOddEntry = oddTableEntries[0];
+        console.log('firstOddEntry is: ');
+        console.log(firstOddEntry);
+        this.setState({ singleTransaction: firstOddEntry });
+        const dateDt = firstOddEntry.getElementsByClassName('date')[0];
+        console.log(dateDt);
+        /*
+        const currencyDt = firstOddEntry[1].Text();
+        console.log(currencyDt);
+        const descriptionDt = firstOddEntry[2].Text();
+        console.log(descriptionDt);
+        const methodDt = firstOddEntry[3].Text();
+        console.log(methodDt);
+        const accountDt = firstOddEntry[4].Text();
+        console.log(accountDt);
+        const referanceDt = firstOddEntry[5].Text();
+        console.log(referanceDt);
+        */
+
         // now $html is a jQuery object
 
         /*
@@ -50,7 +88,8 @@ class SelectWbtStatement extends Component {
         */
         const transactionDateVar = '2017/08/03';
         this.setState({ transactionDate: transactionDateVar });
-        console.log('inside readWbtStatementIntojQuery transactionDateVar=  ' + transactionDateVar);
+        console.log('inside readWbtStatementIntojQuery transactionDateVar ==> \n ');
+        console.log(transactionDateVar);
       }
     });
     console.log('leaving readWbtStatementIntojQuery');
@@ -90,6 +129,7 @@ class SelectWbtStatement extends Component {
     } else {
       transDate = '2017/08/03';
     }
+    const transactionOne = this.state.singleTransaction;
 
     return (
       <div className="panel panel-primary">
@@ -120,6 +160,16 @@ class SelectWbtStatement extends Component {
                     onClick={this.readWbtStatementIntojQuery}
                   >Process WBT Statement</button>&nbsp;
                 </div>
+              </div>
+            </div>
+            <div className="form-group">
+              <label className="col-sm-3 control-label" htmlFor="transaction">Trasnaction</label>
+              <div>
+                <table>
+                  <tbody id="displayTableRow">
+                    <tr><td>some data for this row</td></tr>
+                  </tbody>
+                </table>
               </div>
             </div>
           </form>
