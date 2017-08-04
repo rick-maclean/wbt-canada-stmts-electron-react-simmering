@@ -20,6 +20,14 @@ class SelectWbtStatement extends Component {
     singleTransaction: string,
     transactionAmount: string,
     transDescription: string,
+    tntUserIdSt: string,
+    stFirstName: string,
+    stLastName: string,
+    stStreetAddress: string,
+    stCity: string,
+    stProv: string,
+    stPostalCode: string,
+    stCountry: string,
     transMethod: string,
     transAccount: string,
     transReference: string
@@ -32,6 +40,14 @@ class SelectWbtStatement extends Component {
       singleTransaction: 'singleTransaction',
       transactionAmount: 'transactionAmount',
       transDescription: 'transDescr',
+      tntUserIdSt: 'tntUserId',
+      stFirstName: 'stFirstName',
+      stLastName: 'stLastName',
+      stStreetAddress: 'stStreetAddress',
+      stCity: 'string',
+      stProv: 'string',
+      stPostalCode: 'string',
+      stCountry: 'country',
       transMethod: 'transMethod',
       transAccount: 'transAccount',
       transReference: 'transReference'
@@ -87,19 +103,47 @@ class SelectWbtStatement extends Component {
         for (let i = 0, len = decscriptionSplit.length; i < len; i++) {
           console.log(decscriptionSplit[i]);
         }
+        // tntUserId
         let tntUserId = decscriptionSplit[0];
         console.log(tntUserId);
-        const indx = tntUserId.indexOf(')');
+        let indx = tntUserId.indexOf(')');
         tntUserId = tntUserId.substring(1, indx);
         console.log(tntUserId);
+        this.setState({ tntUserIdSt: tntUserId });
+        // tntName
         const tntName = decscriptionSplit[1];
         console.log(tntName);
+        indx = tntName.lastIndexOf(' ');
+        const tntFirstName = tntName.substring(0, indx);
+        this.setState({ stFirstName: tntFirstName });
+        console.log('#' + tntFirstName +'#');
+        const tntLastName = tntName.substring(indx+1, tntName.length);
+        this.setState({ stLastName: tntLastName });
+        console.log('#' + tntLastName +'#');
+        // tntStreet
         const tntStreet = decscriptionSplit[2];
         console.log(tntStreet);
+        this.setState({ stStreetAddress: tntStreet });
+        // tntCityStZip
         const tntCityStZip = decscriptionSplit[3];
         console.log(tntCityStZip);
+        const tntCityStZipSplit = tntCityStZip.split(' ');
+        const cityStZpLength = tntCityStZipSplit.length;
+        const postalCode = tntCityStZipSplit[cityStZpLength-2] + ' ' + tntCityStZipSplit[cityStZpLength-1];
+        console.log(postalCode);
+        this.setState({ stPostalCode: postalCode });
+        const province = tntCityStZipSplit[cityStZpLength-3];
+        console.log(province);
+        this.setState({ stProv: province });
+        const otherLength = postalCode.length + province.length + 1;
+        const diffLeng = tntCityStZip.length - otherLength;
+        const city = tntCityStZip.substring(0, diffLeng)
+        console.log(city);
+        this.setState({ stCity: city });
+        // tntCountry
         const tntCountry = decscriptionSplit[4];
         console.log(tntCountry);
+        this.setState({ stCountry: tntCountry });
 
         const methodDt = firstOddEntry.getElementsByClassName('method')[0].innerHTML;
         this.setState({ transMethod: methodDt });
@@ -146,6 +190,14 @@ class SelectWbtStatement extends Component {
     let transMethod = 'blah';
     let transAccount = 'blah';
     let transReference = 'blah';
+    let tntUserId = 'blah';
+    let tntFirstName = 'blah';
+    let tntLastName = 'blah';
+    let tntStreet = 'blahla';
+    let tntCity = 'blahla';
+    let tntProv = 'blahla';
+    let tntPostalCode = 'blahla';
+    let tntCountry ='blalaCountry'
     if (this.state.wbtStatementFile === 'wbtStatementFile') {
       transDate = 'No file selected Gumbo.';
       transactionAmount = 'No amount yet';
@@ -156,6 +208,15 @@ class SelectWbtStatement extends Component {
       transMethod = this.state.transMethod;
       transAccount = this.state.transAccount;
       transReference = this.state.transReference;
+      tntUserId = this.state.tntUserIdSt;
+      tntFirstName = this.state.stFirstName;
+      tntLastName = this.state.stLastName;
+      tntStreet = this.state.stStreetAddress;
+      tntCity = this.state.stCity;
+      tntProv = this.state.stProv;
+      tntPostalCode = this.state.stPostalCode;
+      tntCountry = this.state.stCountry;
+
     }
 
     return (
@@ -185,6 +246,30 @@ class SelectWbtStatement extends Component {
               <br></br>
               <label className="col-sm-3 control-label" htmlFor="transactionDate">Description</label>
               <div className="form-text" id="transDescr" placeholder="transDescr" >{transDescr}</div>
+              <br></br>
+              <label className="col-sm-3 control-label" htmlFor="tntUserId">tntUserId</label>
+              <div className="form-text" id="tntUserId" placeholder="tntUserId" >{tntUserId}</div>
+              <br></br>
+              <label className="col-sm-3 control-label" htmlFor="tntFirstName">tntFirstName</label>
+              <div className="form-text" id="tntFirstName" placeholder="tntFirstName" >{tntFirstName}</div>
+              <br></br>
+              <label className="col-sm-3 control-label" htmlFor="tntLastName">tntLastName</label>
+              <div className="form-text" id="tntLastName" placeholder="tntLastName" >{tntLastName}</div>
+              <br></br>
+              <label className="col-sm-3 control-label" htmlFor="tntStreet">tntStreet</label>
+              <div className="form-text" id="tntStreet" placeholder="tntStreet" >{tntStreet}</div>
+              <br></br>
+              <label className="col-sm-3 control-label" htmlFor="tntCity">tntCity</label>
+              <div className="form-text" id="tntCity" placeholder="tntCity" >{tntCity}</div>
+              <br></br>
+              <label className="col-sm-3 control-label" htmlFor="tntProv">tntProv</label>
+              <div className="form-text" id="tntProv" placeholder="tntProv" >{tntProv}</div>
+              <br></br>
+              <label className="col-sm-3 control-label" htmlFor="tntPostalCode">tntPostalCode</label>
+              <div className="form-text" id="tntPostalCode" placeholder="tntPostalCode" >{tntPostalCode}</div>
+              <br></br>
+              <label className="col-sm-3 control-label" htmlFor="tntCountry">tntCountry</label>
+              <div className="form-text" id="tntCountry" placeholder="tntCountry" >{tntCountry}</div>
               <br></br>
               <label className="col-sm-3 control-label" htmlFor="transactionDate">method</label>
               <div className="form-text" id="transDescr" placeholder="transDescr" >{transMethod}</div>
