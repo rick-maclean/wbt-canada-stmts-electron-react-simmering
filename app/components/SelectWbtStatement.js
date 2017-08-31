@@ -95,7 +95,8 @@ class SelectWbtStatement extends Component {
         console.log('dateText is: ');
         console.log(dateText);
         this.setState({ transactionDate: dateText });
-        const amountDt = firstOddEntry.getElementsByClassName('currency')[0].innerText;
+        let amountDt = firstOddEntry.getElementsByClassName('currency')[0].innerText;
+        amountDt = Number(amountDt.replace(/[^0-9\.-]+/g,""));
         this.setState({ transactionAmount: amountDt });
         const transDescr = firstOddEntry.getElementsByClassName('description')[0].innerHTML;
         this.setState({ transDescription: transDescr });
