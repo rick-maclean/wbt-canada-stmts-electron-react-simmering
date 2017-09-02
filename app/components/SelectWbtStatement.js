@@ -145,7 +145,86 @@ class SelectWbtStatement extends Component {
         const tntCountry = decscriptionSplit[4];
         console.log(tntCountry);
         this.setState({ stCountry: tntCountry });
+        //----------------------------------------------------------------------------
+        //----------------------------------------------------------------------------
+        //----------------------------------------------------------------------------
+        // For loop for processing all the entries
+        for (let i = 0; i < oddTableEntries.length; i++){
+          console.log('next entry is ==============================================>');
+          console.log(oddTableEntries[i]);
+          let entryToProcess = oddTableEntries[i];
+          let dateDtlp = entryToProcess.getElementsByClassName('date')[0];
+          let dateTextlp = dateDtlp.innerText;
+          console.log('dateText is: ');
+          console.log(dateTextlp);
+          let amountDtlp = entryToProcess.getElementsByClassName('currency')[0].innerText;
+          amountDtlp = Number(amountDtlp.replace(/[^0-9\.-]+/g,""));
+          console.log('currency is: ');
+          console.log(amountDtlp);
+          const transDescrLp = entryToProcess.getElementsByClassName('description')[0].innerHTML;
+          this.setState({ transDescription: transDescrLp });
+          const decscriptionSplitLp = transDescrLp.split('<br>');
+          // tntUserId
+          let tntUserIdLp = decscriptionSplitLp[0];
+          let indx = tntUserIdLp.indexOf(')');
+          tntUserIdLp = tntUserIdLp.substring(1, indx);
+          console.log('UserId is: ');
+          console.log(tntUserIdLp);
+          // tntName
+          const tntNameLp = decscriptionSplitLp[1];
+          indx = tntNameLp.lastIndexOf(' ');
+          const tntFirstNameLp = tntNameLp.substring(0, indx);
+          console.log('#' + tntFirstNameLp +'#');
+          const tntLastNameLp = tntNameLp.substring(indx+1, tntNameLp.length);
+          console.log('#' + tntLastNameLp +'#');
+          // tntStreet
+          let tntStreetLp = decscriptionSplitLp[2];
+          console.log('Street is : ');
+          console.log(tntStreetLp);
+          let iExtra = 0;
+          if (decscriptionSplitLp.length === 6) {
+            iExtra = 1;
+            tntStreetLp = decscriptionSplitLp[3];
+            console.log('Street 2 is : ');
+            console.log(tntStreetLp);
+          }
 
+          // tntCityStZip
+          const tntCityStZipLp = decscriptionSplitLp[3+iExtra];
+          console.log('CityStZip is : ');
+          console.log(tntCityStZipLp);
+          const tntCityStZipSplitLp = tntCityStZipLp.split(' ');
+          const cityStZpLengthLp = tntCityStZipSplitLp.length;
+          const postalCodeLp = tntCityStZipSplitLp[cityStZpLengthLp-2] + ' ' + tntCityStZipSplitLp[cityStZpLengthLp-1];
+          console.log('PostalCode is : ');
+          console.log(postalCodeLp);
+          const provinceLp = tntCityStZipSplitLp[cityStZpLengthLp-3];
+          console.log('Province is : ');
+          console.log(provinceLp);
+          const otherLengthLp = postalCodeLp.length + provinceLp.length + 1;
+          const diffLengLp = tntCityStZipLp.length - otherLengthLp;
+          const cityLp = tntCityStZipLp.substring(0, diffLengLp)
+          console.log('City is : ');
+          console.log(cityLp);
+          // tntCountry
+          const tntCountryLp = decscriptionSplitLp[4+iExtra];
+          console.log('Country is : ');
+          console.log(tntCountryLp);
+          //Other
+          const methodDtLp = entryToProcess.getElementsByClassName('method')[0].innerHTML;
+          console.log(" method is ===>");
+          console.log(methodDtLp);
+          const accountDtLp = entryToProcess.getElementsByClassName('account')[0].innerHTML;
+          console.log(" account is ===>");
+          console.log(accountDtLp);
+          const referenceDtLp = entryToProcess.getElementsByClassName('reference')[0].innerHTML;
+          console.log(" reference is ===>");
+          console.log(referenceDtLp);
+        }
+        //----------------------------------------------------------------------------
+        //----------------------------------------------------------------------------
+        //----------------------------------------------------------------------------
+        //----------------------------------------------------------------------------
         const methodDt = firstOddEntry.getElementsByClassName('method')[0].innerHTML;
         this.setState({ transMethod: methodDt });
         const accountDt = firstOddEntry.getElementsByClassName('account')[0].innerHTML;
