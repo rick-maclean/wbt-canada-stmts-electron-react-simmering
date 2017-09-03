@@ -17,6 +17,8 @@ class SelectWbtStatement extends Component {
   };
   state: {
     wbtStatementFile: string,
+    wbtDonorFile: string,
+    wbtGiftsFile: string,
     transactionDate: string,
     singleTransaction: string,
     transactionAmount: string,
@@ -37,6 +39,8 @@ class SelectWbtStatement extends Component {
     super();
     this.state = {
       wbtStatementFile: 'wbtStatementFile',
+      wbtDonorFile: 'wbtDonorFile',
+      wbtGiftsFile: 'wbtGiftsFile',
       transactionDate: 'transactionDate',
       singleTransaction: 'singleTransaction',
       transactionAmount: 'transactionAmount',
@@ -57,6 +61,15 @@ class SelectWbtStatement extends Component {
   readWbtStatementIntojQuery = () => {
     console.log('entering readWbtStatementIntojQuery');
     const filename = this.state.wbtStatementFile;
+    const subfileName = filename.replace(/^.*[\\\/]/, '').substring(16, 34);
+    console.log('subfileName is');
+    console.log(subfileName);
+    const donorfile = `${subfileName}DonorList.csv`;
+    console.log('donorfile is');
+    console.log(donorfile);
+    const giftfile = `${subfileName}Gifts.csv`;
+    console.log('giftfile is');
+    console.log(giftfile);
     console.log('filename is==> ' + filename);
     fs.readFile(filename, (err, html) => {
       let jqueryHtml;
@@ -153,9 +166,10 @@ class SelectWbtStatement extends Component {
         const referenceDt = firstOddEntry.getElementsByClassName('reference')[0].innerHTML;
         this.setState({ transReference: referenceDt });
         //----------------------------------------------------------------------------
+        //------------Open Files and Write to them-------------------------------------
         //----------------------------------------------------------------------------
-        //----------------------------------------------------------------------------
-        const outputFileDonors = fs.createWriteStream('./app/components/output/log2017-09Donors.csv', {
+        const donorFileName = `./app/components/output/${donorfile}`;
+        const outputFileDonors = fs.createWriteStream(donorFileName, {
           flags: 'a' //
         });
         outputFileDonors.write('\n');
@@ -166,206 +180,233 @@ class SelectWbtStatement extends Component {
         outputFileDonors.write('Code=WBT-CAD\n');
         outputFileDonors.write('DefaultCurrencyCode=CAD\n');
         outputFileDonors.write('[DONORS]\n');
-        outputFileDonors.write('"PEOPLE_ID","ACCT_NAME","PERSON_TYPE","LAST_NAME_ORG","FIRST_NAME","MIDDLE_NAME","TITLE","SUFFIX",');
+        outputFileDonors.write('"DISPLAY_DATE","PEOPLE_ID","ACCT_NAME","PERSON_TYPE","LAST_NAME_ORG","FIRST_NAME","MIDDLE_NAME","TITLE","SUFFIX",');
         outputFileDonors.write('"SP_LAST_NAME","SP_FIRST_NAME","SP_MIDDLE_NAME","SP_TITLE","SP_SUFFIX",');
         outputFileDonors.write('"ADDR1","ADDR2","ADDR3","ADDR4","CITY","STATE","ZIP","COUNTRY","CNTRY_DESCR",');
         outputFileDonors.write('"ADDR_CHANGED","PHONE","PHONE_CHANGED"\n');
-        const outputFileGifts = fs.createWriteStream('./app/components/output/log2017-09Gifts.csv', {
+        const giftsFileName = `./app/components/output/${giftfile}`;
+        const outputFileGifts = fs.createWriteStream(giftsFileName, {
           flags: 'a' //
         });
         outputFileGifts.write('[GIFTS]\n');
         outputFileGifts.write('"PEOPLE_ID","ACCT_NAME","DISPLAY_DATE","AMOUNT","DONATION_ID","DESIGNATION","MEMO","MOTIVATION","PAYMENT_METHOD"\n');
-        outputFileGifts.write('\n');
         let accountRecord = '';
         let giftFromSupporter = '';
-        // For loop for processing all the entries
-        for (let i = 0; i < evenTableEntries.length; i++){
+        // For loop for processing all the even entries
+        for (let i = 0; i < evenTableEntries.length; i++) {
           console.log('next entry is ==============================================>');
           console.log(evenTableEntries[i]);
           let entryToProcess = evenTableEntries[i];
+          // DATE
           let dateDtlp = entryToProcess.getElementsByClassName('date')[0];
           let displayDate = dateDtlp.innerText;
           console.log('displayDate is: ');
           console.log(displayDate);
-          let amountDtlp = entryToProcess.getElementsByClassName('currency')[0].innerText;
-          amountDtlp = Number(amountDtlp.replace(/[^0-9\.-]+/g,""));
-          console.log('currency is: ');
-          console.log(amountDtlp);
+          // DESCRIPTION Section================================================================
+          // ====================================================================================
+          // ====================================================================================
           const transDescrLp = entryToProcess.getElementsByClassName('description')[0].innerHTML;
           const decscriptionSplitLp = transDescrLp.split('<br>');
-          // tntUserId
-          let tntUserIdLp = decscriptionSplitLp[0];
-          let indx = tntUserIdLp.indexOf(')');
-          tntUserIdLp = tntUserIdLp.substring(1, indx);
-          console.log('UserId is: ');
-          console.log(tntUserIdLp);
-          // tntName
-          const tntAcctName = decscriptionSplitLp[1];
-          accountRecord = `"${tntUserIdLp}","${tntAcctName}","","",`;
-          //caclulate donation_id
-          let donationId = '';
-          donationId = displayDate.replace(/\//g, '');
-          donationId += tntUserIdLp;
-          console.log('donationId is: ');
-          console.log(donationId);
-          indx = tntAcctName.lastIndexOf(' ');
-          const tntFirstNameLp = tntAcctName.substring(0, indx);
-          console.log(`#${tntFirstNameLp}#`);
-          const tntLastNameLp = tntAcctName.substring(indx + 1, tntAcctName.length);
-          console.log(`#${tntLastNameLp}#`);
-          //                "PEOPLE_ID","ACCT_NAME","PERSON_TYPE","LAST_NAME_ORG","FIRST_NAME","MIDDLE_NAME","TITLE","SUFFIX",
-          //                                         "SP_LAST_NAME","SP_FIRST_NAME","SP_MIDDLE_NAME","SP_TITLE","SP_SUFFIX",
-          accountRecord = `"${tntUserIdLp}","${tntAcctName}","","${tntLastNameLp}","${tntFirstNameLp}","","","","","","","","",`;
-          // tntStreet
-          let tntStreet1 = decscriptionSplitLp[2];
-          console.log('Street is : ');
-          console.log(tntStreet1);
-          let tntStreet2 = '""';
-          let iExtra = 0;
-          if (decscriptionSplitLp.length === 6) {
-            iExtra = 1;
-            tntStreet2 = decscriptionSplitLp[3];
-            console.log('Street 2 is : ');
-            console.log(tntStreet2);
+          if (decscriptionSplitLp.length < 2) {
+            console.log('skipping EVEN record since it is not a Canada donation');
           }
-          let addressToOutput = '';
-          //                "ADDR1","ADDR2",         "ADDR3","ADDR4",
-          addressToOutput = `"${tntStreet1}","${tntStreet2}","","",`;
-          // tntCityStZip
-          const tntCityStZipLp = decscriptionSplitLp[3+iExtra];
-          console.log('CityStZip is : ');
-          console.log(tntCityStZipLp);
-          const tntCityStZipSplitLp = tntCityStZipLp.split(' ');
-          const cityStZpLengthLp = tntCityStZipSplitLp.length;
-          const postalCodeLp = tntCityStZipSplitLp[cityStZpLengthLp-2] + ' ' + tntCityStZipSplitLp[cityStZpLengthLp-1];
-          console.log('PostalCode is : ');
-          console.log(postalCodeLp);
-          const provinceLp = tntCityStZipSplitLp[cityStZpLengthLp-3];
-          console.log('Province is : ');
-          console.log(provinceLp);
-          const otherLengthLp = postalCodeLp.length + provinceLp.length + 1;
-          const diffLengLp = tntCityStZipLp.length - otherLengthLp;
-          const cityLp = tntCityStZipLp.substring(0, diffLengLp)
-          console.log('City is : ');
-          console.log(cityLp);
-          // tntCountry
-          const tntCountryLp = decscriptionSplitLp[4+iExtra];
-          console.log('Country is : ');
-          console.log(tntCountryLp);
-          //"CITY","STATE","ZIP","COUNTRY","CNTRY_DESCR","ADDR_CHANGED","PHONE","PHONE_CHANGED"
-          addressToOutput += `"${cityLp}","${provinceLp}","${postalCodeLp}","${tntCountryLp}","${tntCountryLp}","","",""`;
-          //Other
-          const methodDtLp = entryToProcess.getElementsByClassName('method')[0].innerHTML;
-          console.log(" method is ===>");
-          console.log(methodDtLp);
-          const accountDtLp = entryToProcess.getElementsByClassName('account')[0].innerHTML;
-          console.log(" account is ===>");
-          console.log(accountDtLp);
-          const referenceDtLp = entryToProcess.getElementsByClassName('reference')[0].innerHTML;
-          console.log(" reference is ===>");
-          console.log(referenceDtLp);
-          giftFromSupporter = `"${tntUserIdLp}","${tntAcctName}","${displayDate}","${amountDtlp}","${donationId}","51361","","Unknown","${methodDtLp}"`;
-          outputFileGifts.write(giftFromSupporter);
-          outputFileGifts.write('\n');
-          outputFileDonors.write(accountRecord);
-          outputFileDonors.write(addressToOutput);
-          outputFileDonors.write('\n');
+          else {
+            // tntUserId
+            let tntUserIdLp = decscriptionSplitLp[0];
+            let indx = tntUserIdLp.indexOf(')');
+            tntUserIdLp = tntUserIdLp.substring(1, indx);
+            console.log('UserId is: ');
+            console.log(tntUserIdLp);
+            // tntName
+            const tntAcctName = decscriptionSplitLp[1];
+            accountRecord = `"${tntUserIdLp}","${tntAcctName}","","",`;
+            //caclulate donation_id
+            let donationId = '';
+            donationId = displayDate.replace(/\//g, '');
+            donationId += tntUserIdLp;
+            console.log('donationId is: ');
+            console.log(donationId);
+            indx = tntAcctName.lastIndexOf(' ');
+            const tntFirstNameLp = tntAcctName.substring(0, indx);
+            console.log(`#${tntFirstNameLp}#`);
+            const tntLastNameLp = tntAcctName.substring(indx + 1, tntAcctName.length);
+            console.log(`#${tntLastNameLp}#`);
+            //                "PEOPLE_ID","ACCT_NAME","PERSON_TYPE","LAST_NAME_ORG","FIRST_NAME","MIDDLE_NAME","TITLE","SUFFIX",
+            //                                         "SP_LAST_NAME","SP_FIRST_NAME","SP_MIDDLE_NAME","SP_TITLE","SP_SUFFIX",
+            accountRecord = `"${displayDate}","${tntUserIdLp}","${tntAcctName}","","${tntLastNameLp}","${tntFirstNameLp}","","","","","","","","",`;
+            // tntStreet
+            let tntStreet1 = decscriptionSplitLp[2];
+            console.log('Street is : ');
+            console.log(tntStreet1);
+            let tntStreet2 = '""';
+            let iExtra = 0;
+            if (decscriptionSplitLp.length === 6) {
+              iExtra = 1;
+              tntStreet2 = decscriptionSplitLp[3];
+              console.log('Street 2 is : ');
+              console.log(tntStreet2);
+            }
+            let addressToOutput = '';
+            //                "ADDR1","ADDR2",         "ADDR3","ADDR4",
+            addressToOutput = `"${tntStreet1}","${tntStreet2}","","",`;
+            // tntCityStZip
+            const tntCityStZipLp = decscriptionSplitLp[3+iExtra];
+            console.log('CityStZip is : ');
+            console.log(tntCityStZipLp);
+            const tntCityStZipSplitLp = tntCityStZipLp.split(' ');
+            const cityStZpLengthLp = tntCityStZipSplitLp.length;
+            const postalCodeLp = tntCityStZipSplitLp[cityStZpLengthLp-2] + ' ' + tntCityStZipSplitLp[cityStZpLengthLp-1];
+            console.log('PostalCode is : ');
+            console.log(postalCodeLp);
+            const provinceLp = tntCityStZipSplitLp[cityStZpLengthLp-3];
+            console.log('Province is : ');
+            console.log(provinceLp);
+            const otherLengthLp = postalCodeLp.length + provinceLp.length + 1;
+            const diffLengLp = tntCityStZipLp.length - otherLengthLp;
+            const cityLp = tntCityStZipLp.substring(0, diffLengLp)
+            console.log('City is : ');
+            console.log(cityLp);
+            // tntCountry
+            const tntCountryLp = decscriptionSplitLp[4+iExtra];
+            console.log('Country is : ');
+            console.log(tntCountryLp);
+            //"CITY","STATE","ZIP","COUNTRY","CNTRY_DESCR","ADDR_CHANGED","PHONE","PHONE_CHANGED"
+            addressToOutput += `"${cityLp}","${provinceLp}","${postalCodeLp}","${tntCountryLp}","${tntCountryLp}","","",""`;
+            // end of DESCRIPTION Section================================================================
+            // ====================================================================================
+            // ====================================================================================
+            // AMOUNT
+            let amountDtlp = entryToProcess.getElementsByClassName('currency')[0].innerText;
+            amountDtlp = Number(amountDtlp.replace(/[^0-9\.-]+/g,""));
+            amountDtlp = amountDtlp.toFixed(2);
+            console.log('currency is: ');
+            console.log(amountDtlp);
+            const methodDtLp = entryToProcess.getElementsByClassName('method')[0].innerHTML;
+            console.log(" method is ===>");
+            console.log(methodDtLp);
+            const accountDtLp = entryToProcess.getElementsByClassName('account')[0].innerHTML;
+            console.log(" account is ===>");
+            console.log(accountDtLp);
+            const referenceDtLp = entryToProcess.getElementsByClassName('reference')[0].innerHTML;
+            console.log(" reference is ===>");
+            console.log(referenceDtLp);
+            giftFromSupporter = `"${tntUserIdLp}","${tntAcctName}","${displayDate}","${amountDtlp}","${donationId}","51361","","Unknown","${methodDtLp}"`;
+            outputFileGifts.write(giftFromSupporter);
+            outputFileGifts.write('\n');
+            outputFileDonors.write(accountRecord);
+            outputFileDonors.write(addressToOutput);
+            outputFileDonors.write('\n');
+          }
         }
-        //============================================================
-        //================================================================
-        // For loop for processing all the entries
-        for (let i = 0; i < oddTableEntries.length; i++){
+        // ============================================================
+        // ================================================================
+        for (let i = 0; i < oddTableEntries.length; i++) {
           console.log('next entry is ==============================================>');
           console.log(oddTableEntries[i]);
           let entryToProcess = oddTableEntries[i];
+          // DATE
           let dateDtlp = entryToProcess.getElementsByClassName('date')[0];
           let displayDate = dateDtlp.innerText;
           console.log('displayDate is: ');
           console.log(displayDate);
-          let amountDtlp = entryToProcess.getElementsByClassName('currency')[0].innerText;
-          amountDtlp = Number(amountDtlp.replace(/[^0-9\.-]+/g,""));
-          console.log('currency is: ');
-          console.log(amountDtlp);
+          // DESCRIPTION Section================================================================
+          // ====================================================================================
+          // ====================================================================================
           const transDescrLp = entryToProcess.getElementsByClassName('description')[0].innerHTML;
           const decscriptionSplitLp = transDescrLp.split('<br>');
-          // tntUserId
-          let tntUserIdLp = decscriptionSplitLp[0];
-          let indx = tntUserIdLp.indexOf(')');
-          tntUserIdLp = tntUserIdLp.substring(1, indx);
-          console.log('UserId is: ');
-          console.log(tntUserIdLp);
-          // tntName
-          const tntAcctName = decscriptionSplitLp[1];
-          accountRecord = `"${tntUserIdLp}","${tntAcctName}","","",`;
-          //caclulate donation_id
-          let donationId = '';
-          donationId = displayDate.replace(/\//g, '');
-          donationId += tntUserIdLp;
-          console.log('donationId is: ');
-          console.log(donationId);
-          indx = tntAcctName.lastIndexOf(' ');
-          const tntFirstNameLp = tntAcctName.substring(0, indx);
-          console.log(`#${tntFirstNameLp}#`);
-          const tntLastNameLp = tntAcctName.substring(indx + 1, tntAcctName.length);
-          console.log(`#${tntLastNameLp}#`);
-          //                "PEOPLE_ID","ACCT_NAME","PERSON_TYPE","LAST_NAME_ORG","FIRST_NAME","MIDDLE_NAME","TITLE","SUFFIX",
-          //                                         "SP_LAST_NAME","SP_FIRST_NAME","SP_MIDDLE_NAME","SP_TITLE","SP_SUFFIX",
-          accountRecord = `"${tntUserIdLp}","${tntAcctName}","","${tntLastNameLp}","${tntFirstNameLp}","","","","","","","","",`;
-          // tntStreet
-          let tntStreet1 = decscriptionSplitLp[2];
-          console.log('Street is : ');
-          console.log(tntStreet1);
-          let tntStreet2 = '""';
-          let iExtra = 0;
-          if (decscriptionSplitLp.length === 6) {
-            iExtra = 1;
-            tntStreet2 = decscriptionSplitLp[3];
-            console.log('Street 2 is : ');
-            console.log(tntStreet2);
+          if (decscriptionSplitLp.length < 2) {
+            console.log('skipping record since it is not a Canada donation');
           }
-          let addressToOutput = '';
-          //                "ADDR1","ADDR2",         "ADDR3","ADDR4",
-          addressToOutput = `"${tntStreet1}","${tntStreet2}","","",`;
-          // tntCityStZip
-          const tntCityStZipLp = decscriptionSplitLp[3+iExtra];
-          console.log('CityStZip is : ');
-          console.log(tntCityStZipLp);
-          const tntCityStZipSplitLp = tntCityStZipLp.split(' ');
-          const cityStZpLengthLp = tntCityStZipSplitLp.length;
-          const postalCodeLp = tntCityStZipSplitLp[cityStZpLengthLp-2] + ' ' + tntCityStZipSplitLp[cityStZpLengthLp-1];
-          console.log('PostalCode is : ');
-          console.log(postalCodeLp);
-          const provinceLp = tntCityStZipSplitLp[cityStZpLengthLp-3];
-          console.log('Province is : ');
-          console.log(provinceLp);
-          const otherLengthLp = postalCodeLp.length + provinceLp.length + 1;
-          const diffLengLp = tntCityStZipLp.length - otherLengthLp;
-          const cityLp = tntCityStZipLp.substring(0, diffLengLp)
-          console.log('City is : ');
-          console.log(cityLp);
-          // tntCountry
-          const tntCountryLp = decscriptionSplitLp[4+iExtra];
-          console.log('Country is : ');
-          console.log(tntCountryLp);
-          //"CITY","STATE","ZIP","COUNTRY","CNTRY_DESCR","ADDR_CHANGED","PHONE","PHONE_CHANGED"
-          addressToOutput += `"${cityLp}","${provinceLp}","${postalCodeLp}","${tntCountryLp}","${tntCountryLp}","","",""`;
-          //Other
-          const methodDtLp = entryToProcess.getElementsByClassName('method')[0].innerHTML;
-          console.log(" method is ===>");
-          console.log(methodDtLp);
-          const accountDtLp = entryToProcess.getElementsByClassName('account')[0].innerHTML;
-          console.log(" account is ===>");
-          console.log(accountDtLp);
-          const referenceDtLp = entryToProcess.getElementsByClassName('reference')[0].innerHTML;
-          console.log(" reference is ===>");
-          console.log(referenceDtLp);
-          giftFromSupporter = `"${tntUserIdLp}","${tntAcctName}","${displayDate}","${amountDtlp}","${donationId}","51361","","Unknown","${methodDtLp}"`;
-          outputFileGifts.write(giftFromSupporter);
-          outputFileGifts.write('\n');
-          outputFileDonors.write(accountRecord);
-          outputFileDonors.write(addressToOutput);
-          outputFileDonors.write('\n');
+          else {
+            // tntUserId
+            let tntUserIdLp = decscriptionSplitLp[0];
+            let indx = tntUserIdLp.indexOf(')');
+            tntUserIdLp = tntUserIdLp.substring(1, indx);
+            console.log('UserId is: ');
+            console.log(tntUserIdLp);
+            // tntName
+            const tntAcctName = decscriptionSplitLp[1];
+            accountRecord = `"${tntUserIdLp}","${tntAcctName}","","",`;
+            //caclulate donation_id
+            let donationId = '';
+            donationId = displayDate.replace(/\//g, '');
+            donationId += tntUserIdLp;
+            console.log('donationId is: ');
+            console.log(donationId);
+            indx = tntAcctName.lastIndexOf(' ');
+            const tntFirstNameLp = tntAcctName.substring(0, indx);
+            console.log(`#${tntFirstNameLp}#`);
+            const tntLastNameLp = tntAcctName.substring(indx + 1, tntAcctName.length);
+            console.log(`#${tntLastNameLp}#`);
+            //                "PEOPLE_ID","ACCT_NAME","PERSON_TYPE","LAST_NAME_ORG","FIRST_NAME","MIDDLE_NAME","TITLE","SUFFIX",
+            //                                         "SP_LAST_NAME","SP_FIRST_NAME","SP_MIDDLE_NAME","SP_TITLE","SP_SUFFIX",
+            accountRecord = `"${displayDate}","${tntUserIdLp}","${tntAcctName}","","${tntLastNameLp}","${tntFirstNameLp}","","","","","","","","",`;
+            // tntStreet
+            let tntStreet1 = decscriptionSplitLp[2];
+            console.log('Street is : ');
+            console.log(tntStreet1);
+            let tntStreet2 = '""';
+            let iExtra = 0;
+            if (decscriptionSplitLp.length === 6) {
+              iExtra = 1;
+              tntStreet2 = decscriptionSplitLp[3];
+              console.log('Street 2 is : ');
+              console.log(tntStreet2);
+            }
+            let addressToOutput = '';
+            //                "ADDR1","ADDR2",         "ADDR3","ADDR4",
+            addressToOutput = `"${tntStreet1}","${tntStreet2}","","",`;
+            // tntCityStZip
+            const tntCityStZipLp = decscriptionSplitLp[3+iExtra];
+            console.log('CityStZip is : ');
+            console.log(tntCityStZipLp);
+            const tntCityStZipSplitLp = tntCityStZipLp.split(' ');
+            const cityStZpLengthLp = tntCityStZipSplitLp.length;
+            const postalCodeLp = tntCityStZipSplitLp[cityStZpLengthLp-2] + ' ' + tntCityStZipSplitLp[cityStZpLengthLp-1];
+            console.log('PostalCode is : ');
+            console.log(postalCodeLp);
+            const provinceLp = tntCityStZipSplitLp[cityStZpLengthLp-3];
+            console.log('Province is : ');
+            console.log(provinceLp);
+            const otherLengthLp = postalCodeLp.length + provinceLp.length + 1;
+            const diffLengLp = tntCityStZipLp.length - otherLengthLp;
+            const cityLp = tntCityStZipLp.substring(0, diffLengLp)
+            console.log('City is : ');
+            console.log(cityLp);
+            // tntCountry
+            const tntCountryLp = decscriptionSplitLp[4+iExtra];
+            console.log('Country is : ');
+            console.log(tntCountryLp);
+            //"CITY","STATE","ZIP","COUNTRY","CNTRY_DESCR","ADDR_CHANGED","PHONE","PHONE_CHANGED"
+            addressToOutput += `"${cityLp}","${provinceLp}","${postalCodeLp}","${tntCountryLp}","${tntCountryLp}","","","",`;
+            // end of DESCRIPTION Section================================================================
+            // ====================================================================================
+            // ====================================================================================
+            // AMOUNT
+            let amountDtlp = entryToProcess.getElementsByClassName('currency')[0].innerText;
+            amountDtlp = Number(amountDtlp.replace(/[^0-9\.-]+/g,""));
+            amountDtlp = amountDtlp.toFixed(2);
+            console.log('currency is: ');
+            console.log(amountDtlp);
+            const methodDtLp = entryToProcess.getElementsByClassName('method')[0].innerHTML;
+            console.log(" method is ===>");
+            console.log(methodDtLp);
+            const accountDtLp = entryToProcess.getElementsByClassName('account')[0].innerHTML;
+            console.log(" account is ===>");
+            console.log(accountDtLp);
+            const referenceDtLp = entryToProcess.getElementsByClassName('reference')[0].innerHTML;
+            console.log(" reference is ===>");
+            console.log(referenceDtLp);
+            giftFromSupporter = `"${tntUserIdLp}","${tntAcctName}","${displayDate}","${amountDtlp}","${donationId}","51361","","Unknown","${methodDtLp}"`;
+            outputFileGifts.write(giftFromSupporter);
+            outputFileGifts.write('\n');
+            outputFileDonors.write(accountRecord);
+            outputFileDonors.write(addressToOutput);
+            outputFileDonors.write('\n');
+          }
         }
+        // ============================================================
+        // ================================================================
         outputFileDonors.end(); // close string
         outputFileGifts.end(); // close file
         //----------------------------------------------------------------------------
