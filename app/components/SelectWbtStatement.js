@@ -200,7 +200,19 @@ class SelectWbtStatement extends Component {
           // DATE
           let dateDtlp = entryToProcess.getElementsByClassName('date')[0];
           let displayDate = dateDtlp.innerText;
-          console.log('displayDate is: ');
+          console.log('displayDate before is: ');
+          console.log(displayDate);
+          let date = new Date(displayDate);
+          //console.log('date before is: ');
+          //console.log(date);
+          //console.log('date.getMonth()  is: ');
+          //console.log(date.getMonth());
+          //console.log('date.getDate()  is: ');
+          //console.log(date.getDate());
+          //console.log('date.getFullYear()  is: ');
+          //console.log(date.getFullYear());
+          displayDate = (date.getMonth()+1) + '/' + date.getDate() + '/' +  date.getFullYear();
+          console.log('displayDate after is: ');
           console.log(displayDate);
           // DESCRIPTION Section================================================================
           // ====================================================================================
@@ -223,7 +235,7 @@ class SelectWbtStatement extends Component {
             //caclulate donation_id
             let donationId = '';
             donationId = displayDate.replace(/\//g, '');
-            donationId += tntUserIdLp;
+            donationId += tntUserIdLp + "ZZ";
             console.log('donationId is: ');
             console.log(donationId);
             indx = tntAcctName.lastIndexOf(' ');
@@ -307,7 +319,19 @@ class SelectWbtStatement extends Component {
           // DATE
           let dateDtlp = entryToProcess.getElementsByClassName('date')[0];
           let displayDate = dateDtlp.innerText;
-          console.log('displayDate is: ');
+          console.log('displayDate before is: ');
+          console.log(displayDate);
+          let date = new Date(displayDate);
+          //console.log('date before is: ');
+          //console.log(date);
+          //console.log('date.getMonth()  is: ');
+          //console.log(date.getMonth());
+          //console.log('date.getDate()  is: ');
+          //console.log(date.getDate());
+          //console.log('date.getFullYear()  is: ');
+          //console.log(date.getFullYear());
+          displayDate = (date.getMonth()+1) + '/' + date.getDate() + '/' +  date.getFullYear();
+          console.log('displayDate after is: ');
           console.log(displayDate);
           // DESCRIPTION Section================================================================
           // ====================================================================================
@@ -330,7 +354,7 @@ class SelectWbtStatement extends Component {
             //caclulate donation_id
             let donationId = '';
             donationId = displayDate.replace(/\//g, '');
-            donationId += tntUserIdLp;
+            donationId += tntUserIdLp + "ZZ";
             console.log('donationId is: ');
             console.log(donationId);
             indx = tntAcctName.lastIndexOf(' ');
