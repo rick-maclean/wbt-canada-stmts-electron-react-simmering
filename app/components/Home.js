@@ -59,7 +59,6 @@ export default class Home extends Component {
             <img src={jestpadded} className="img-thumbnail" alt="logo" />
           </div>
           <h1>Hi there we have a very simple React in Electron App</h1>
-          <h3>Well what are we up to now Rick</h3>
           <SelectWbtStatement
             onTransactionDate={(transactionDate) => this.handleTransactionDate(transactionDate)}
           />

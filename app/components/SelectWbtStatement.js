@@ -169,6 +169,7 @@ class SelectWbtStatement extends Component {
         //------------Open Files and Write to them-------------------------------------
         //----------------------------------------------------------------------------
         const donorFileName = `./app/components/output/${donorfile}`;
+        this.setState({ wbtDonorFile: donorFileName });
         const outputFileDonors = fs.createWriteStream(donorFileName, {
           flags: 'a' //
         });
@@ -185,6 +186,7 @@ class SelectWbtStatement extends Component {
         outputFileDonors.write('"ADDR1","ADDR2","ADDR3","ADDR4","CITY","STATE","ZIP","COUNTRY","CNTRY_DESCR",');
         outputFileDonors.write('"ADDR_CHANGED","PHONE","PHONE_CHANGED"\n');
         const giftsFileName = `./app/components/output/${giftfile}`;
+        this.setState({ wbtGiftsFile: giftsFileName });
         const outputFileGifts = fs.createWriteStream(giftsFileName, {
           flags: 'a' //
         });
@@ -574,6 +576,12 @@ class SelectWbtStatement extends Component {
                   >Process WBT Statement</button>&nbsp;
                 </div>
               </div>
+            </div>
+            <div className="form-group">
+              <label htmlFor="wbtDonorFile">output DonorFile</label>
+              <div className="form-text" id="wbtDonorFileId" >{this.state.wbtDonorFile}</div>
+              <label htmlFor="wbtGiftsFile">output GiftsFile</label>
+              <div className="form-text" id="wbtGiftsFileId" >{this.state.wbtGiftsFile}</div>
             </div>
           </form>
         </div>
