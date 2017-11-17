@@ -9,9 +9,7 @@ import appStorage from 'electron-json-storage';
 // import styles from './Home.css';
 
 import jestpadded from './jest-padded-90.png';
-import LoginForm from '../components/LoginForm';
 import SelectWbtStatement from '../components/SelectWbtStatement';
-import StatementDisplay from '../components/StatementDisplay';
 
 const app = electron.remote;
 const dialog = app.dialog;
@@ -25,22 +23,12 @@ function persistData(storageKey, jsonData) {
 
 export default class Home extends Component {
   state: {
-    emailUsername: string,
-    passwordStateNotUsed: string,
-    inputText: string,
-    textInHome: string,
-    metaDataFolder: string,
-    metaDataFolderSelected: boolean
+    someStateVariable: string,
   }
   constructor() {
     super();
     this.state = {
-      emailUsername: 'anEmail@domain.top',
-      passwordStateNotUsed: 'noPasswordy',
-      inputText: 'this is something',
-      textInHome: 'text In Home',
-      metaDataFolder: 'metaDataFolder initial state',
-      metaDataFolderSelected: false
+      someStateVariable: 'just a place holder for demo of structure',
     };
   }
   handleTryText(inputText) {
@@ -74,12 +62,6 @@ export default class Home extends Component {
           <h3>Well what are we up to now Rick</h3>
           <SelectWbtStatement
             onTransactionDate={(transactionDate) => this.handleTransactionDate(transactionDate)}
-          />
-          <StatementDisplay />
-          <LoginForm
-            onTryText={(tryText) => this.handleTryText(tryText)}
-            textToHome={this.state.textInHome}
-            onChangeTextToHome={this.mainOnChangeTextToHome}
           />
         </div>
       </div>
