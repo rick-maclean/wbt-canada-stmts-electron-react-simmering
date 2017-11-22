@@ -557,14 +557,14 @@ class SelectWbtStatement extends Component {
               <label className="col-sm-3 control-label" htmlFor="tntCountry">tntCountry</label>
               <div className="form-text" id="tntCountry" placeholder="tntCountry" >{tntCountry}</div>
               <br></br>
-              <label className="col-sm-3 control-label" htmlFor="transactionDate">method</label>
-              <div className="form-text" id="transDescr" placeholder="transDescr" >{transMethod}</div>
+              <label className="col-sm-3 control-label" htmlFor="transMethod">method</label>
+              <div className="form-text" id="transMethod" placeholder="transMethod" >{transMethod}</div>
               <br></br>
-              <label className="col-sm-3 control-label" htmlFor="transactionDate">account Member</label>
-              <div className="form-text" id="transDescr" placeholder="transDescr" >{transAccount}</div>
+              <label className="col-sm-3 control-label" htmlFor="transAccount">account Member</label>
+              <div className="form-text" id="transAccount" placeholder="transAccount" >{transAccount}</div>
               <br></br>
-              <label className="col-sm-3 control-label" htmlFor="transactionDate">reference</label>
-              <div className="form-text" id="transDescr" placeholder="transDescr" >{transReference}</div>
+              <label className="col-sm-3 control-label" htmlFor="transReference">reference</label>
+              <div className="form-text" id="transReference" placeholder="transReference" >{transReference}</div>
               <div className="col-sm-offset-3 col-sm-9">
                 <div className="pull-right">
                   <button
