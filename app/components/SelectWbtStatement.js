@@ -529,10 +529,10 @@ class SelectWbtStatement extends Component {
               <label className="col-sm-3 control-label" htmlFor="transactionDate">transactionDate</label>
               <div className="form-text" id="transactionDate" placeholder="transactionDate" >{transDate}</div>
               <br></br>
-              <label className="col-sm-3 control-label" htmlFor="transactionDate">Amount</label>
+              <label className="col-sm-3 control-label" htmlFor="transactionAmount">Amount</label>
               <div className="form-text" id="transactionAmount" placeholder="transactionAmount" >{transactionAmount}</div>
               <br></br>
-              <label className="col-sm-3 control-label" htmlFor="transactionDate">Description</label>
+              <label className="col-sm-3 control-label" htmlFor="transDescr">Description</label>
               <div className="form-text" id="transDescr" placeholder="transDescr" >{transDescr}</div>
               <br></br>
               <label className="col-sm-3 control-label" htmlFor="tntUserId">tntUserId</label>
@@ -559,14 +559,14 @@ class SelectWbtStatement extends Component {
               <label className="col-sm-3 control-label" htmlFor="tntCountry">tntCountry</label>
               <div className="form-text" id="tntCountry" placeholder="tntCountry" >{tntCountry}</div>
               <br></br>
-              <label className="col-sm-3 control-label" htmlFor="transactionDate">method</label>
-              <div className="form-text" id="transDescr" placeholder="transDescr" >{transMethod}</div>
+              <label className="col-sm-3 control-label" htmlFor="transMethod">method</label>
+              <div className="form-text" id="transMethod" placeholder="transMethod" >{transMethod}</div>
               <br></br>
-              <label className="col-sm-3 control-label" htmlFor="transactionDate">account Member</label>
-              <div className="form-text" id="transDescr" placeholder="transDescr" >{transAccount}</div>
+              <label className="col-sm-3 control-label" htmlFor="transAccount">account Member</label>
+              <div className="form-text" id="transAccount" placeholder="transAccount" >{transAccount}</div>
               <br></br>
-              <label className="col-sm-3 control-label" htmlFor="transactionDate">reference</label>
-              <div className="form-text" id="transDescr" placeholder="transDescr" >{transReference}</div>
+              <label className="col-sm-3 control-label" htmlFor="transReference">reference</label>
+              <div className="form-text" id="transReference" placeholder="transReference" >{transReference}</div>
               <div className="col-sm-offset-3 col-sm-9">
                 <div className="pull-right">
                   <button
